@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 450px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .container-inner {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 10px rgba(106, 17, 203, 0.6);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            max-width: 200px; /* 限制按钮的最大宽度 */
+            padding: 14px;
+            background-color: #6a11cb;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            margin: 0 auto; /* 居中对齐 */
+            display: block;
+        }
+
+        button:hover {
+            background-color: #2575fc;
+        }
+
+        .message {
+            color: #ff0000;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .switch-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .switch-link a {
+            color: #6a11cb;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="container-inner">
+        <h2>注册</h2>
+        <form id="register-form">
+            <input type="text" id="register-username" placeholder="请输入用户名" required />
+            <input type="password" id="register-password" placeholder="请输入密码" required />
+            <input type="email" id="register-email" placeholder="请输入邮箱" required />
+            <input type="tel" id="register-phone" placeholder="请输入手机号" required />
+            <button type="submit">注册</button>
+        </form>
+
+        <div class="switch-link">
+            <p>已有账号？<a href="login.html">登录</a></p>
+        </div>
+
+        <div class="message" id="response-message"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#register-form').on('submit', function(e) {
+            e.preventDefault();
+
+            const username = $('#register-username').val();
+            const password = $('#register-password').val();
+            const email = $('#register-email').val();
+            const phone = $('#register-phone').val();
+
+            // 手机号格式校验
+            if (!/^\d{11}$/.test(phone)) {
+                alert('手机号格式不正确，应为11位数字');
+                return;
+            }
+            // 邮箱格式校验
+            if (!/^[\w._%+-]+@[\w.-]+\.[a-z]{2,4}$/.test(email)) {
+                alert('邮箱格式不正确，请重新输入');
+                return;
+            }
+
+            $.ajax({
+                url: 'http://localhost:8080/api/register', // 后端注册接口 URL
+                type: 'POST',
+                data: {
+                    username: username,
+                    password: password,
+                    email: email,
+                    phone: phone
+                },
+                success: function(response) {
+                    const userChoice = confirm("您已注册成功, 是否要跳转到登录界面?");
+                    if (userChoice) {
+                        window.location.href = 'login.html'; // 用户点击确定，跳转到登录页面
+                    } else {
+                        console.log("用户选择取消跳转");
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
