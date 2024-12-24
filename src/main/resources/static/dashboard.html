@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大数据可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+        }
+
+        header {
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chart-container {
+            width: 90%;
+            max-width: 1000px;
+            height: 400px;
+            margin: 20px 0;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>大数据可视化界面</h1>
+</header>
+<div class="container">
+    <div class="chart-container" id="main-chart"></div>
+    <div class="chart-container" id="secondary-chart"></div>
+</div>
+
+<script>
+    // 初始化主图表
+    const mainChart = echarts.init(document.getElementById('main-chart'));
+
+    // 主图表配置
+    const mainChartOption = {
+        title: {
+            text: '销售数据统计',
+            subtext: '月度数据',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        xAxis: {
+            type: 'category',
+            data: ['一月', '二月', '三月', '四月', '五月', '六月']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [{
+            name: '销售额',
+            type: 'line',
+            data: [820, 932, 901, 934, 1290, 1330],
+            smooth: true,
+            areaStyle: {}
+        }]
+    };
+    mainChart.setOption(mainChartOption);
+    // 初始化次图表
+    const secondaryChart = echarts.init(document.getElementById('secondary-chart'));
+    // 次图表配置
+    const secondaryChartOption = {
+        title: {
+            text: '地区分布',
+            subtext: '用户来源',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        series: [
+            {
+                name: '用户来源',
+                type: 'pie',
+                radius: '50%',
+                data: [
+                    { value: 1048, name: '北京' },
+                    { value: 735, name: '上海' },
+                    { value: 580, name: '广州' },
+                    { value: 484, name: '深圳' },
+                    { value: 300, name: '其他' }
+                ],
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+    secondaryChart.setOption(secondaryChartOption);
+</script>
+</body>
+</html>
