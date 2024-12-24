@@ -1,0 +1,89 @@
+package com.mengxiaoqi.service;
+import com.mengxiaoqi.info.UserInfo;
+import com.mengxiaoqi.repository.UserInfoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.Optional;
+@Service
+public class UserInfoService {
+    @Autowired
+    private UserInfoRepository userInfoRepository;
+    /*校验手机号、邮箱格式*/
+    public boolean isPhoneValid(String phone) {
+        return phone != null && phone.matches("\\d{11}");
+    }
+    public boolean isEmailValid(String email) {
+        return email != null && email.matches("^[\\w._%+-]+@[\\w.-]+\\.com$");
+    }
+    // 注册方法
+    public String registerUser(String username, String password, String email, String phone) {
+        System.out.println("用户名: " + username);
+        System.out.println("密码: " + password);
+        System.out.println("邮箱: " + email);
+        System.out.println("手机号: " + phone);
+        Optional<UserInfo> existUser = userInfoRepository.findByUsername(username);
+        Optional<UserInfo> existEmail = userInfoRepository.findByEmail(email);
+        Optional<UserInfo> existPhone = userInfoRepository.findByPhone(phone);
+        if (existUser.isPresent()) {
+            return "用户名已存在！";
+        }
+        if (existEmail.isPresent()) {
+            return "邮箱已存在！";
+        }
+        if (existPhone.isPresent()) {
+            return "手机号已存在！";
+        }
+        if (!isPhoneValid(phone)) {
+            return "手机号格式不正确，应为11位数字";
+        }
+        if (!isEmailValid(email)) {
+            return "邮箱格式不正确，应包含 '@' 且以 '.com' 结尾";
+        }
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUsername(username);
+        userInfo.setPassword(password);
+        userInfo.setEmail(email);
+        userInfo.setPhone(phone);
+        userInfoRepository.save(userInfo);
+        return "注册成功！";
+    }
+    // 登录方法
+    //验证用户名 | 邮箱 | 手机号
+    public boolean loginByUsername(String username, String password) {
+       if(username == null || password == null) {
+           return false;
+       }
+       Optional<UserInfo> userOpt = userInfoRepository.findByUsername(username);
+        System.out.println("找到用户:" + userOpt);  //打印是否找到用户
+       if(!userOpt.isPresent()) {
+           return false;
+       }
+       UserInfo user = userOpt.get();
+       return user.getPassword().equals(password);
+    }
+    public boolean loginByEmail(String email, String password) {
+        if(email == null || password == null) {
+            return false;
+        }
+        Optional<UserInfo> EmailOpt = userInfoRepository.findByEmail(email);
+        System.out.println("找到邮箱:" + EmailOpt);  //打印是否找到邮箱
+
+        if(!EmailOpt.isPresent()) {
+            return false;
+        }
+        UserInfo user = EmailOpt.get();
+        return user.getPassword().equals(password);
+    }
+    public boolean loginByPhone(String phone, String password) {
+        if(phone == null || password == null) {
+            return false;
+        }
+        Optional<UserInfo> PhoneOpt = userInfoRepository.findByPhone(phone);
+        System.out.println("找到手机号:" + PhoneOpt);  //打印是否找到手机号
+        if(!PhoneOpt.isPresent()) {
+            return false;
+        }
+        UserInfo user = PhoneOpt.get();
+        return user.getPassword().equals(password);
+    }
+}
