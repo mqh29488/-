@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #ff6ec7, #ff9a8b, #f7b7a3);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 450px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .container-inner {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #ff6ec7;
+            box-shadow: 0 0 10px rgba(255, 110, 199, 0.6);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            max-width: 200px; /* 限制按钮的最大宽度 */
+            padding: 14px;
+            background-color: #ff6ec7;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            margin: 0 auto; /* 居中对齐 */
+            display: block;
+        }
+
+        button:hover {
+            background-color: #ff9a8b;
+        }
+
+        .message {
+            color: #ff0000;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .switch-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .switch-link a {
+            color: #ff6ec7;
+            text-decoration: none;
+        }
+        /* 加载动画样式 */
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #loading-container {
+            display: none; /* 默认隐藏 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        /* 其他样式 */
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="container-inner">
+        <h2>登录</h2>
+        <form id="login-form">
+            <input type="text" id="login-input" placeholder="用户名 / 邮箱 / 手机号" required />
+            <input type="password" id="login-password" placeholder="请输入密码" required />
+            <button type="submit">登录</button>
+        </form>
+
+        <div class="switch-link">
+            <p>没有账号？<a href="register.html">注册</a></p>
+        </div>
+
+        <div class="message" id="response-message"></div>
+    </div>
+</div>
+
+<!-- 加载动画 -->
+<div id="loading-container">
+    <p style="font-size: 20px; margin-bottom: 20px;">即将进入大数据分析系统</p>
+    <div class="loader"></div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // 初始化隐藏加载动画
+        $('#loading-container').hide();
+
+        // 登录表单提交逻辑
+        $('#login-form').on('submit', function (e) {
+            e.preventDefault(); // 阻止默认表单提交行为
+
+            const loginInput = $('#login-input').val();
+            const password = $('#login-password').val();
+
+            // 提交表单后，先进行请求，不显示加载动画
+            $('#response-message').css('color', 'blue').text('正在登录，请稍后...');
+
+            $.ajax({
+                url: 'http://localhost:8080/api/login',
+                type: 'POST',
+                data: {
+                    loginInput: loginInput,
+                    password: password,
+                },
+                success: function (response) {
+                    if (response === "登录成功") {
+                        // 登录成功后，显示加载动画
+                        $('#loading-container').fadeIn(); // 显示加载动画
+
+                        // 延迟 2 秒后跳转到大数据可视化页面
+                        setTimeout(function () {
+                            window.location.href = '/dashboard.html'; // 跳转到大数据可视化页面
+                        }, 2000); // 2秒后跳转
+                    } else {
+                        $('#response-message').css('color', 'red').text('登录失败，用户名/邮箱/手机号或密码错误');
+                    }
+                },
+                error: function () {
+                    $('#response-message').css('color', 'red').text('登录失败，稍后再试！');
+                },
+            });
+        });
+    });
+</script>
+</body>
+</html>
