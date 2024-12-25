@@ -6,5 +6,7 @@ Chrome 131.0.6778.205（正式版本） （64 位）
 
 版本:
 JDK 1.8  
+Hadoop-3.3.0(Windows、Linux)
 MySQL 8.4.3(Windows版)  
-SpringBoot 2.7.18
+SpringBoot 2.7.18  
+
